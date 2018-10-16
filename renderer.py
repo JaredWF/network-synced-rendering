@@ -17,25 +17,13 @@ import os
 from sprites import *
 from concurrent.futures import ThreadPoolExecutor
 from flask_socketio import SocketIO
+from inspect import signature
 
 
 class Renderer(App):
     def __init__(self, wid, *args, **kwargs):
         super(Renderer, self).__init__(*args, **kwargs)
         self.wid = wid
-
-
-    def add_rects(self, count, *largs):
-        for x in range(count):
-            scale = random.uniform(0.3, 1)
-            rect = MovingSprite(canvas=self.wid.canvas, color=Color(random.uniform(0, 1), 1, 1, mode='hsv'),
-                                                   vel=(30, 0),
-                                                   xLimits=[-1000, 2000],
-                                                   yLimits=[-500, 1500],
-                                                   pos=(-512, random.randint(0, 1080)),
-                                                   size=(256*scale, 32*scale),
-                                                   source='img/raindrop_square.png')
-            self.wid.add(rect)
 
     def addMovingRaindrop(self, *largs):
         rect = Sprite(pos=(-512, random.randint(0, 1440)), size=(256, 32), source='img/raindrop_square.png')
@@ -55,7 +43,7 @@ class Renderer(App):
 
         #Clock.schedule_interval(partial(self.add_rects, 1), 1)
         #self.add_rects(1)
-        self.addMovingRaindrop()
+        self.addMovingRaindrop() #seems like a needed initialization step for future sprites to be added
         #Clock.schedule_interval(partial(self.addMovingRaindrop), 1.0/5.0)
         Clock.schedule_interval(partial(self.wid.update), 1.0/60.0)
 
@@ -76,16 +64,21 @@ def parseAddSpriteJSON(jsonArr):
 def parseModJSON(jsonArr):
     mods = []
     for m in jsonArr:
-        name = m["name"]
-        del m["name"]
-        if name == "velocity":
-            mods.append(Velocity(**m))
-        elif name == "color":
-            mods.append(SpriteColor(**m))
-        elif name == "bounds":
-            mods.append(BoundsDelete(**m))
+        for mod in SpriteModifier.__subclasses__():
+            parms = list(signature(mod.__init__).parameters)
+            parms.remove("self")
+            parms.remove("kwargs")
+            if parms == list(m.keys()):
+                mods.append(mod(**m))
 
     return mods
+
+def arraySubset(arr1, arr2):
+    for a in arr1:
+        if a not in arr2:
+            return False
+
+    return True
 
 
 kivyApp = Renderer(SpriteManager())
