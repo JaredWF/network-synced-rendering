@@ -56,6 +56,7 @@ def parseAddSpriteJSON(jsonArr):
         del s["mods"]
         sprite = Sprite(**s)
         mods = parseModJSON(modParms)
+        print(mods)
         sprite.addModifiers(mods)
         sprites.append(sprite)
 
@@ -64,16 +65,21 @@ def parseAddSpriteJSON(jsonArr):
 def parseModJSON(jsonArr):
     mods = []
     for m in jsonArr:
+        print(m)
         for mod in SpriteModifier.__subclasses__():
             parms = list(signature(mod.__init__).parameters)
             parms.remove("self")
             parms.remove("kwargs")
-            if parms == list(m.keys()):
+            if arrayContentsEqual(parms, list(m.keys())):
                 mods.append(mod(**m))
 
     return mods
 
-def arraySubset(arr1, arr2):
+#makes it so the arrays don't need matching orders
+def arrayContentsEqual(arr1, arr2):
+    if len(arr1) != len(arr2):
+        return False
+
     for a in arr1:
         if a not in arr2:
             return False

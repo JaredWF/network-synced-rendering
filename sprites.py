@@ -74,6 +74,13 @@ class Sprite(Rectangle):
         for m in self.modifiers:
             m.update(dt)
 
+class SpriteModel(object):
+    def __init__(self, pos, size, source, mods, **kwargs):
+        self.pos = pos
+        self.size = size
+        self.source = source
+        self.mods = mods
+
 
 class SpriteModifier: #make factory method so you don't have to pass in sprite
     def __init__(self):
@@ -103,10 +110,13 @@ class Velocity(SpriteModifier):
 class SpriteColor(SpriteModifier):
     def __init__(self, r, g, b, a, **kwargs):
         super(SpriteColor, self).__init__(**kwargs)
-        self.color = Color(r, g, b, a)
+        self.r = r
+        self.g = g
+        self.b = b
+        self.a = a
 
     def getCanvasComponent(self):
-        return self.color
+        return Color(self.r, self.g, self.b, self.a)
 
 class SpriteColorRainbow(SpriteModifier):
     def __init__(self, startingColor, transitionSpeed, **kwargs):
