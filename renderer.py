@@ -18,7 +18,10 @@ from sprites import *
 from concurrent.futures import ThreadPoolExecutor
 from flask_socketio import SocketIO
 from inspect import signature
+import socket
 
+HOST = '0.0.0.0'  # Standard loopback interface address (localhost)
+PORT = 5000        # Port to listen on (non-privileged ports are > 1023)
 
 class Renderer(App):
     def __init__(self, wid, *args, **kwargs):
@@ -44,7 +47,7 @@ class Renderer(App):
         #Clock.schedule_interval(partial(self.add_rects, 1), 1)
         #self.add_rects(1)
         self.addMovingRaindrop() #seems like a needed initialization step for future sprites to be added
-        Clock.schedule_interval(partial(self.addMovingRaindrop), 1.0/0.1)
+        #Clock.schedule_interval(partial(self.addMovingRaindrop), 1.0/0.1)
         Clock.schedule_interval(partial(self.wid.update), 1.0/60.0)
 
         return root
@@ -86,38 +89,29 @@ def arrayContentsEqual(arr1, arr2):
 
 
 kivyApp = Renderer(SpriteManager())
-app = Flask(__name__)
-socketio = SocketIO(app)
 
-@app.route("/")
-def hello():
-    return "Hello World!"
+def start_websocket():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, PORT))
+        s.listen()
+        conn, addr = s.accept()
+        with conn:
+            print('Connected by', addr)
+            while True:
+                data = conn.recv(1024)
+                if not data:
+                    break
 
-@app.route('/create_sprite', methods=['POST'])
-def create_sprite():
-    content = request.json
-    #kivyApp.addMovingRaindrop()
-    sprites = parseAddSpriteJSON(content)
-    for s in sprites:
-        kivyApp.wid.add(s)
+                jsonString = data.decode()
+                sprites = parseAddSpriteJSON(json.loads(jsonString))
+                for s in sprites:
+                    kivyApp.wid.add(s)
 
-    return "success"
-
-@socketio.on('add_sprites')
-def test_message(message):
-    sprites = parseAddSpriteJSON(json.loads(message))
-    for s in sprites:
-        kivyApp.wid.add(s)
-
-def start_app():
-    print("Starting Flask app...")
-    socketio.run(app, port=5000, host='0.0.0.0')
-    #socketio.run(app, port=5000, host='127.0.0.1')
-    #app.run(port=5000, debug=False, host='0.0.0.0')     #specify separate port to run Flask app
+                #conn.sendall(data)
 
 
 if __name__ == '__main__':
-    t = threading.Thread(target=start_app)
+    t = threading.Thread(target=start_websocket)
     t.setDaemon(True)
     t.start()
     kivyApp.run()

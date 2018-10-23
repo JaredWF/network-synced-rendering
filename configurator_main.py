@@ -7,18 +7,21 @@ from inspect import signature
 import jsonpickle
 import datetime, threading, time
 import random
+import socket
+
+HOST = '127.0.0.1'  # The server's hostname or IP address
+PORT = 5000        # The port used by the server
 
 class Configurator(Ui_Configurator):
-	def __init__(self, dialog):
-		self.socketIO = SocketIO('192.168.1.46', 5000)
-		#self.socketIO = SocketIO('127.0.0.1', 5000)
+	def __init__(self, dialog, socket):
+		self.socket = socket
 		Ui_Configurator.__init__(self)
 		self.setupUi(dialog)
 		tempSprites = self.buildTestSprites()
 		self.sprites = []
-		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[0], [100, 500]))
-		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[1], [100, 500]))
-		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[2], [100, 500]))
+		self.sprites.append(SpriteModelWrapper(self.socket, tempSprites[0], [100, 500]))
+		self.sprites.append(SpriteModelWrapper(self.socket, tempSprites[1], [100, 500]))
+		self.sprites.append(SpriteModelWrapper(self.socket, tempSprites[2], [100, 500]))
 
 		# Connect "add" button with a custom function (addInputTextToListbox)
 		for b in self.buttons:
@@ -40,21 +43,21 @@ class Configurator(Ui_Configurator):
 
 
 	def sendRequest(self):
-		self.socketIO.emit('add_sprites', self.buildJSON([self.sprites[0].sprite]))
+		self.socket.sendall(self.buildJSON([self.sprites[0].sprite]).encode())
 
 class SpriteModelWrapper(object):
 	#client: the SocketIO client to emit through
 	#sprite: the SpriteJSONModel to send
 	#spawnIntervalRange: a two element array containing the lower and upper bound of time in milliseconds between spawns
-	def __init__(self, client, sprite, spawnIntervalRange):
-		self.client = client
+	def __init__(self, socket, sprite, spawnIntervalRange):
+		self.socket = socket
 		self.sprite = sprite
 		self.spawnIntervalRange = spawnIntervalRange
 		self.targetTime = time.time()
 		self.spawnPeriodically()
 
 	def spawnPeriodically(self):
-		self.client.emit('add_sprites', jsonpickle.encode([self.sprite], unpicklable=False))
+		self.socket.sendall(jsonpickle.encode([self.sprite], unpicklable=False).encode())
 		self.targetTime = self.targetTime + random.randint(self.spawnIntervalRange[0], self.spawnIntervalRange[1])/1000
 		threading.Timer(self.targetTime - time.time(), self.spawnPeriodically).start()
 
@@ -63,7 +66,9 @@ if __name__ == '__main__':
 	app = QtWidgets.QApplication(sys.argv)
 	dialog = QtWidgets.QMainWindow()
 
-	prog = Configurator(dialog)
+	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+		s.connect((HOST, PORT))
+		prog = Configurator(dialog, s)
 
-	dialog.show()
-	sys.exit(app.exec_())
+		dialog.show()
+		sys.exit(app.exec_())
