@@ -1,0 +1,6 @@
+1. --json encoding--
+2. --scheduled sprite spawning--
+3. degrading performance when spawning using websocket
+4. configuration saving/loading
+5. rotation
+6. text

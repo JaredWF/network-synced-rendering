@@ -74,7 +74,7 @@ class Sprite(Rectangle):
         for m in self.modifiers:
             m.update(dt)
 
-class SpriteModel(object):
+class SpriteJSONModel(object):
     def __init__(self, pos, size, source, mods, **kwargs):
         self.pos = pos
         self.size = size

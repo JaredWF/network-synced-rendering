@@ -27,7 +27,7 @@ class Renderer(App):
 
     def addMovingRaindrop(self, *largs):
         rect = Sprite(pos=(-512, random.randint(0, 1440)), size=(256, 32), source='img/raindrop_square.png')
-        mod = Velocity(vel=(1500,0))
+        mod = Velocity(vel=(random.randint(1200, 2000),0))
         col = SpriteColorRainbow(startingColor=Color(random.uniform(0, 1), 1, 1, mode='hsv'), transitionSpeed=0.3)
         bound = BoundsDelete(xLimits=[-1000, 3000], yLimits=[0, 1440])
         animSize = AnimatedSize(speed=-0.8)
@@ -44,7 +44,7 @@ class Renderer(App):
         #Clock.schedule_interval(partial(self.add_rects, 1), 1)
         #self.add_rects(1)
         self.addMovingRaindrop() #seems like a needed initialization step for future sprites to be added
-        #Clock.schedule_interval(partial(self.addMovingRaindrop), 1.0/5.0)
+        Clock.schedule_interval(partial(self.addMovingRaindrop), 1.0/0.1)
         Clock.schedule_interval(partial(self.wid.update), 1.0/60.0)
 
         return root
@@ -56,7 +56,6 @@ def parseAddSpriteJSON(jsonArr):
         del s["mods"]
         sprite = Sprite(**s)
         mods = parseModJSON(modParms)
-        print(mods)
         sprite.addModifiers(mods)
         sprites.append(sprite)
 
@@ -65,7 +64,6 @@ def parseAddSpriteJSON(jsonArr):
 def parseModJSON(jsonArr):
     mods = []
     for m in jsonArr:
-        print(m)
         for mod in SpriteModifier.__subclasses__():
             parms = list(signature(mod.__init__).parameters)
             parms.remove("self")
