@@ -85,7 +85,7 @@ class SpriteJSONModel(object):
 
 
 class SpriteModifier: #make factory method so you don't have to pass in sprite
-    def __init__(self):
+    def __init__(self, **kwargs):
         pass
 
     def setSprite(self, sprite):

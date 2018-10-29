@@ -68,10 +68,17 @@ def parseModJSON(jsonArr):
             parms = list(signature(mod.__init__).parameters)
             parms.remove("self")
             parms.remove("kwargs")
-            if arrayContentsEqual(parms, list(m.keys())):
+            if arr1Subset(parms, list(m.keys())):
                 mods.append(mod(**m))
 
     return mods
+
+def arr1Subset(arr1, arr2):
+    for a in arr1:
+        if a not in arr2:
+            return False
+
+    return True
 
 #makes it so the arrays don't need matching orders
 def arrayContentsEqual(arr1, arr2):
