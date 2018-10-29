@@ -10,15 +10,15 @@ import random
 
 class Configurator(Ui_Configurator):
 	def __init__(self, dialog):
-		self.socketIO = SocketIO('192.168.1.46', 5000)
+		self.socketIO = SocketIO('127.0.0.1', 5000)
 		#self.socketIO = SocketIO('127.0.0.1', 5000)
 		Ui_Configurator.__init__(self)
 		self.setupUi(dialog)
 		tempSprites = self.buildTestSprites()
 		self.sprites = []
-		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[0], [100, 500]))
-		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[1], [100, 500]))
-		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[2], [100, 500]))
+		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[0], [1000, 5000]))
+		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[1], [100000, 500000]))
+		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[2], [100000, 500000]))
 
 		# Connect "add" button with a custom function (addInputTextToListbox)
 		for b in self.buttons:
