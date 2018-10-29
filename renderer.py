@@ -102,10 +102,14 @@ def start_websocket():
                 if not data:
                     break
 
-                jsonString = data.decode()
-                sprites = parseAddSpriteJSON(json.loads(jsonString))
-                for s in sprites:
-                    kivyApp.wid.add(s)
+                #sometimes has multiple packets within
+                dirtyJSON = data.decode()
+                cleanJSON = dirtyJSON.replace("][", "]`[").split("`")
+
+                for j in cleanJSON:
+                    sprites = parseAddSpriteJSON(json.loads(j))
+                    for s in sprites:
+                        kivyApp.wid.add(s)
 
                 #conn.sendall(data)
 
