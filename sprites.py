@@ -48,6 +48,7 @@ class MovingSprite(Rectangle):
 class Sprite(Rectangle):
     def __init__(self, **kwargs):
         super(Sprite, self).__init__(**kwargs)
+        self.mods = []
 
     def setManager(self, manager):
         self.manager = manager
@@ -59,15 +60,16 @@ class Sprite(Rectangle):
 
     def addToCanvas(self):
         for m in self.modifiers:
-            if m.getCanvasComponent():
-                self.manager.canvas.add(m.getCanvasComponent())
+            temp = m.getCanvasComponent()
+            if temp:
+                self.mods.append(temp)
+                self.manager.canvas.add(temp)
         self.manager.canvas.add(self)
 
     def removeFromCanvas(self):
         self.manager.canvas.remove(self) #maybe do this twice?
-        for m in self.modifiers:
-            if m.getCanvasComponent():
-                self.manager.canvas.remove(m.getCanvasComponent())
+        for m in self.mods:
+            self.manager.canvas.remove(m)
 
 
     def update(self, dt):
