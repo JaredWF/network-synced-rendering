@@ -10,29 +10,27 @@ import random
 
 class Configurator(Ui_Configurator):
 	def __init__(self, dialog):
-		self.socketIO = SocketIO('127.0.0.1', 5000)
+		self.socketIO = SocketIO('192.168.1.46', 5000)
 		#self.socketIO = SocketIO('127.0.0.1', 5000)
 		Ui_Configurator.__init__(self)
 		self.setupUi(dialog)
 		tempSprites = self.buildTestSprites()
 		self.sprites = []
-		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[0], [1000, 5000]))
-		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[1], [100000, 500000]))
-		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[2], [100000, 500000]))
+		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[0], [500, 2000]))
+		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[1], [500, 2000]))
+		self.sprites.append(SpriteModelWrapper(self.socketIO, tempSprites[2], [500, 2000]))
 
 		# Connect "add" button with a custom function (addInputTextToListbox)
 		for b in self.buttons:
 			b.clicked.connect(self.sendRequest)
 
 	def buildTestSprites(self):
-		vel = Velocity(vel=(1500, 0))
-		red = SpriteColor(r=1, g=0, b=0, a=1)
-		green = SpriteColor(r=0, g=1, b=0, a=1)
-		blue = SpriteColor(r=0, g=0, b=1, a=1)
+		vel = Velocity(vel=(500, 0))
+        col = SpriteColorRainbow(transitionSpeed=0.3)
 		boundDel = BoundsDelete(xLimits=(-500, 2300), yLimits=(0, 2500))
-		redSprite = SpriteJSONModel(pos=(-300, 200), size=(256, 32), source="img/raindrop_square.png", mods=[vel, red, boundDel])
-		greenSprite = SpriteJSONModel(pos=(-300, 500), size=(256, 32), source="img/raindrop_square.png", mods=[vel, green, boundDel])
-		blueSprite = SpriteJSONModel(pos=(-300, 800), size=(256, 32), source="img/raindrop_square.png", mods=[vel, blue, boundDel])
+		redSprite = SpriteJSONModel(pos=(-300, 200), size=(256, 32), source="img/raindrop_square.png", mods=[vel, col, boundDel])
+		greenSprite = SpriteJSONModel(pos=(-300, 500), size=(256, 32), source="img/raindrop_square.png", mods=[vel, col, boundDel])
+		blueSprite = SpriteJSONModel(pos=(-300, 800), size=(256, 32), source="img/raindrop_square.png", mods=[vel, col, boundDel])
 		return [redSprite, greenSprite, blueSprite]
 
 	def buildJSON(self, sprites):

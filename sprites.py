@@ -121,9 +121,9 @@ class SpriteColor(SpriteModifier):
         return Color(self.r, self.g, self.b, self.a)
 
 class SpriteColorRainbow(SpriteModifier):
-    def __init__(self, startingColor, transitionSpeed, **kwargs):
+    def __init__(self, transitionSpeed, **kwargs):
         super(SpriteColorRainbow, self).__init__(**kwargs)
-        self.color = startingColor
+        self.color = Color(random.uniform(0, 1), 1, 1, mode='hsv')
         self.transitionSpeed = transitionSpeed
 
     def getCanvasComponent(self):
