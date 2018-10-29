@@ -28,7 +28,7 @@ class Renderer(App):
     def addMovingRaindrop(self, *largs):
         rect = Sprite(pos=(-512, random.randint(0, 1440)), size=(256, 32), source='img/raindrop_square.png')
         mod = Velocity(vel=(random.randint(1200, 2000),0))
-        col = SpriteColorRainbow(startingColor=Color(random.uniform(0, 1), 1, 1, mode='hsv'), transitionSpeed=0.3)
+        col = SpriteColorRainbow(transitionSpeed=0.3)
         bound = BoundsDelete(xLimits=[-1000, 3000], yLimits=[0, 1440])
         animSize = AnimatedSize(speed=-0.8)
         rect.addModifiers([mod, col, bound, animSize])
