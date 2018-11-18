@@ -10,10 +10,8 @@ import random
 
 class Configurator(Ui_Configurator):
 	def __init__(self, dialog):
-		#self.socketIO = SocketIO('192.168.1.63', 5000)
-		#self.socketIO = SocketIO('192.168.1.62', 5000)
-		#self.socketIO = SocketIO('127.0.0.1', 5000)
-		self.sockets = [SocketIO('192.168.1.62', 5000), SocketIO('192.168.1.63', 5000)]
+		#self.sockets = [SocketIO('192.168.1.62', 5000), SocketIO('192.168.1.63', 5000)]
+		self.sockets = [SocketIO('127.0.0.1', 5000)]
 		Ui_Configurator.__init__(self)
 		self.setupUi(dialog)
 		tempSprites = self.buildTestSprites()

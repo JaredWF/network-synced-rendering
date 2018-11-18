@@ -14,6 +14,10 @@ from flask import Flask, jsonify, request
 import threading
 from multiprocessing import Process
 import os
+import json
+
+xOffset = json.loads(open('config.json').read())["screen_offset"]["x"]
+yOffset = json.loads(open('config.json').read())["screen_offset"]["y"]
 
 
 class MovingSprite(Rectangle):
@@ -49,6 +53,8 @@ class Sprite(Rectangle):
     def __init__(self, **kwargs):
         super(Sprite, self).__init__(**kwargs)
         self.mods = []
+        self.globalPos = self.pos
+        self.pos = (self.globalPos[0] + xOffset, self.globalPos[1] + yOffset)
 
     def setManager(self, manager):
         self.manager = manager
@@ -104,7 +110,8 @@ class Velocity(SpriteModifier):
         #self.vel = ReferenceListProperty(NumericProperty(vel[0]), NumericProperty(vel[1]))
 
     def update(self, dt):
-        self.sprite.pos = (self.sprite.pos[0] + dt*self.vel[0], self.sprite.pos[1] + dt*self.vel[1])
+        self.sprite.globalPos = (self.sprite.globalPos[0] + dt*self.vel[0], self.sprite.globalPos[1] + dt*self.vel[1])
+        self.sprite.pos = (self.sprite.globalPos[0] + xOffset, self.sprite.globalPos[1] + yOffset)
 
     def getCanvasComponent(self):
         return None
@@ -158,8 +165,8 @@ class BoundsDelete(SpriteModifier):
         return None
 
     def update(self, dt):
-        posX = self.sprite.pos[0]
-        posY = self.sprite.pos[1]
+        posX = self.sprite.globalPos[0]
+        posY = self.sprite.globalPos[1]
         if posX < self.xLimits[0] or posX > self.xLimits[1]:
             self.sprite.manager.removeSprite(self.sprite)
         elif posY < self.xLimits[0] or posY > self.yLimits[1]:
