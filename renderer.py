@@ -14,6 +14,7 @@ import json
 import threading
 from multiprocessing import Process
 import os
+os.environ['KIVY_GL_BACKEND'] = 'gl'
 from sprites import *
 from concurrent.futures import ThreadPoolExecutor
 from flask_socketio import SocketIO
