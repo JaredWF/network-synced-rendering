@@ -130,7 +130,8 @@ class SpriteColor(SpriteModifier):
 class SpriteColorRainbow(SpriteModifier):
     def __init__(self, startHue, transitionSpeed, **kwargs):
         super(SpriteColorRainbow, self).__init__(**kwargs)
-        self.color = Color(startHue, 1, 1, mode='hsv')
+        self.startHue = startHue
+        self.color = Color(random.uniform(0, 1), 1, 1, mode='hsv')
         self.transitionSpeed = transitionSpeed
 
     def getCanvasComponent(self):
