@@ -54,7 +54,7 @@ class Sprite(Rectangle):
         super(Sprite, self).__init__(**kwargs)
         self.mods = []
         self.globalPos = self.pos
-        self.pos = (self.globalPos[0] + xOffset, self.globalPos[1] + yOffset)
+        self.pos = (self.globalPos[0] - xOffset, self.globalPos[1] - yOffset)
 
     def setManager(self, manager):
         self.manager = manager
@@ -111,7 +111,7 @@ class Velocity(SpriteModifier):
 
     def update(self, dt):
         self.sprite.globalPos = (self.sprite.globalPos[0] + dt*self.vel[0], self.sprite.globalPos[1] + dt*self.vel[1])
-        self.sprite.pos = (self.sprite.globalPos[0] + xOffset, self.sprite.globalPos[1] + yOffset)
+        self.sprite.pos = (self.sprite.globalPos[0] - xOffset, self.sprite.globalPos[1] - yOffset)
 
     def getCanvasComponent(self):
         return None

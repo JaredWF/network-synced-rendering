@@ -10,8 +10,8 @@ import random
 
 class Configurator(Ui_Configurator):
 	def __init__(self, dialog):
-		#self.sockets = [SocketIO('192.168.1.62', 5000), SocketIO('192.168.1.63', 5000)]
-		self.sockets = [SocketIO('127.0.0.1', 5000)]
+		self.sockets = [SocketIO('192.168.1.62', 5000), SocketIO('192.168.1.63', 5000)]
+		#self.sockets = [SocketIO('127.0.0.1', 5000)]
 		Ui_Configurator.__init__(self)
 		self.setupUi(dialog)
 		tempSprites = self.buildTestSprites()
@@ -28,7 +28,7 @@ class Configurator(Ui_Configurator):
 		vel = Velocity(vel=(1000, 0))
 		col = SpriteColorRainbow(transitionSpeed=0.3)
 		red = SpriteColor(r=1, g=0, b=0, a=1)
-		boundDel = BoundsDelete(xLimits=(-500, 2300), yLimits=(0, 2500))
+		boundDel = BoundsDelete(xLimits=(-500, 3000), yLimits=(0, 2500))
 		redSprite = SpriteJSONModel(pos=(-300, 100), size=(256, 32), source="img/raindrop_square.png", mods=[vel, col, boundDel])
 		greenSprite = SpriteJSONModel(pos=(-300, 400), size=(256, 32), source="img/raindrop_square.png", mods=[vel, col, boundDel])
 		blueSprite = SpriteJSONModel(pos=(-300, 700), size=(256, 32), source="img/raindrop_square.png", mods=[vel, col, boundDel])
