@@ -26,7 +26,7 @@ class Configurator(Ui_Configurator):
 
 	def buildTestSprites(self):
 		vel = Velocity(vel=(1000, 0))
-		col = SpriteColorRainbow(transitionSpeed=0.3)
+		col = SpriteColorRainbow(startHue=0, transitionSpeed=0.3)
 		red = SpriteColor(r=1, g=0, b=0, a=1)
 		boundDel = BoundsDelete(xLimits=(-500, 3000), yLimits=(0, 2500))
 		redSprite = SpriteJSONModel(pos=(-300, 100), size=(256, 32), source="img/raindrop_square.png", mods=[vel, col, boundDel])
