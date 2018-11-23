@@ -14,28 +14,20 @@ class Configurator(Ui_Configurator):
 		#self.sockets = [SocketIO('127.0.0.1', 5000)]
 		Ui_Configurator.__init__(self)
 		self.setupUi(dialog)
-		tempSprites = self.buildTestSprites()
-		self.sprites = []
-		self.sprites.append(SpriteModelWrapper(self.sockets, tempSprites[0], [500, 2000]))
-		self.sprites.append(SpriteModelWrapper(self.sockets, tempSprites[1], [500, 2000]))
-		self.sprites.append(SpriteModelWrapper(self.sockets, tempSprites[2], [500, 2000]))
+
+		vel = Velocity(vel=(1000, 0))
+		col = SpriteColorRainbow(startHue=0, transitionSpeed=0.4)
+		boundDel = BoundsDelete(xLimits=(-500, 3000), yLimits=(0, 2500))
+		self.sprite = SpriteModelWrapper(sockets=self.sockets,
+											positionRange=[[-300, -300], [-0, 768]],
+											sizeRange=[[256,256], [32,32]],
+											source="img/raindrop_square.png",
+											mods=[vel, col, boundDel],
+											spawnIntervalRange=[80, 300])
 
 		# Connect "add" button with a custom function (addInputTextToListbox)
 		#for b in self.buttons:
 			#b.clicked.connect(self.sendRequest)
-
-	def buildTestSprites(self):
-		vel = Velocity(vel=(1000, 0))
-		col = SpriteColorRainbow(startHue=0, transitionSpeed=0.3)
-		red = SpriteColor(r=1, g=0, b=0, a=1)
-		boundDel = BoundsDelete(xLimits=(-500, 3000), yLimits=(0, 2500))
-		redSprite = SpriteJSONModel(pos=(-300, 100), size=(256, 32), source="img/raindrop_square.png", mods=[vel, col, boundDel])
-		greenSprite = SpriteJSONModel(pos=(-300, 400), size=(256, 32), source="img/raindrop_square.png", mods=[vel, col, boundDel])
-		blueSprite = SpriteJSONModel(pos=(-300, 700), size=(256, 32), source="img/raindrop_square.png", mods=[vel, col, boundDel])
-		return [redSprite, greenSprite, blueSprite]
-
-	def buildJSON(self, sprites):
-		return jsonpickle.encode(sprites, unpicklable=False)
 
 
 	#def sendRequest(self):
@@ -45,16 +37,24 @@ class SpriteModelWrapper(object):
 	#sockets: an array of SocketIO clients to emit through
 	#sprite: the SpriteJSONModel to send
 	#spawnIntervalRange: a two element array containing the lower and upper bound of time in milliseconds between spawns
-	def __init__(self, sockets, sprite, spawnIntervalRange):
+	def __init__(self, sockets, positionRange, sizeRange, source, mods, spawnIntervalRange):
 		self.sockets = sockets
-		self.sprite = sprite
+		self.positionRange = positionRange
+		self.sizeRange = sizeRange
+		self.source = source
+		self.mods = mods
 		self.spawnIntervalRange = spawnIntervalRange
 		self.targetTime = time.time()
 		self.spawnPeriodically()
 
 	def spawnPeriodically(self):
+		xPos = random.randint(self.positionRange[0][0], self.positionRange[0][1])
+		yPos = random.randint(self.positionRange[1][0], self.positionRange[1][1])
+		xSize = random.randint(self.sizeRange[0][0], self.sizeRange[0][1])
+		ySize = random.randint(self.sizeRange[1][0], self.sizeRange[1][1])
+		sprite = SpriteJSONModel(pos=(xPos, yPos), size=(xSize, ySize), source=self.source, mods=self.mods)
 		for socket in self.sockets:
-			socket.emit('add_sprites', jsonpickle.encode([self.sprite], unpicklable=False))
+			socket.emit('add_sprites', jsonpickle.encode([sprite], unpicklable=False))
 		self.targetTime = self.targetTime + random.randint(self.spawnIntervalRange[0], self.spawnIntervalRange[1])/1000
 		threading.Timer(self.targetTime - time.time(), self.spawnPeriodically).start()
 
