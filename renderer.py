@@ -27,7 +27,8 @@ class Renderer(App):
         self.wid = wid
 
     def addMovingRaindrop(self, *largs):
-        rect = Sprite(pos=(-512, random.randint(0, 1440)), size=(256, 32), source='img/raindrop_square.png')
+        #rect = Sprite(pos=(-512, random.randint(0, 1440)), size=(256, 32), source='img/raindrop_square2.png')
+        rect = Sprite(pos=(-512, random.randint(0, 1440)), size=(256, 32), source='atlas://img/hexagon/frame1')
         mod = Velocity(vel=(random.randint(1200, 2000),0))
         col = SpriteColorRainbow(startHue=0, transitionSpeed=0.3)
         bound = BoundsDelete(xLimits=[-1000, 3000], yLimits=[0, 1440])
@@ -44,8 +45,15 @@ class Renderer(App):
 
         #Clock.schedule_interval(partial(self.add_rects, 1), 1)
         #self.add_rects(1)
-        self.addMovingRaindrop() #seems like a needed initialization step for future sprites to be added
-        Clock.schedule_interval(partial(self.addMovingRaindrop), 1.0/0.1)
+
+        #self.addMovingRaindrop() #seems like a needed initialization step for future sprites to be added
+        #Clock.schedule_interval(partial(self.addMovingRaindrop), 1.0/0.1)
+        for img in os.listdir("./img"):
+            if "atlas" in img:
+                temp = img.split(".")
+                Image(arg='atlas://img/'  + temp[0] + '/frame0')
+            elif "png" in img:
+                Image(arg='img/' + img)
         Clock.schedule_interval(partial(self.wid.update), 1.0/60.0)
 
         return root

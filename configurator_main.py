@@ -10,20 +10,22 @@ import random
 
 class Configurator(Ui_Configurator):
 	def __init__(self, dialog):
-		self.sockets = [SocketIO('192.168.1.62', 5000), SocketIO('192.168.1.63', 5000)]
-		#self.sockets = [SocketIO('127.0.0.1', 5000)]
+		#self.sockets = [SocketIO('192.168.1.62', 5000), SocketIO('192.168.1.63', 5000)]
+		self.sockets = [SocketIO('127.0.0.1', 5000)]
 		Ui_Configurator.__init__(self)
 		self.setupUi(dialog)
 
 		vel = Velocity(vel=(1000, 0))
 		col = SpriteColorRainbow(startHue=0, transitionSpeed=0.4)
 		boundDel = BoundsDelete(xLimits=(-500, 3000), yLimits=(0, 2500))
+		hex = SpriteSheet(atlas="atlas://img/hexagon", frameCount=6, frameTime=[0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
 		self.sprite = SpriteModelWrapper(sockets=self.sockets,
-											positionRange=[[-300, -300], [-0, 768]],
-											sizeRange=[[256,256], [32,32]],
-											source="img/raindrop_square.png",
-											mods=[vel, col, boundDel],
-											spawnIntervalRange=[80, 300])
+											positionRange=[[-300, -300], [200, 200]],
+											sizeRange=[[128,128], [128,128]],
+											mods=[vel, col, boundDel, hex],
+											source="atlas://img/hexagon/frame0",
+											#source="img/raindrop_square.png",
+											spawnIntervalRange=[5000, 5000])
 
 		# Connect "add" button with a custom function (addInputTextToListbox)
 		#for b in self.buttons:

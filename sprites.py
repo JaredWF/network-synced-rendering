@@ -156,6 +156,29 @@ class AnimatedSize(SpriteModifier):
     def update(self, dt):
         self.sprite.size = (self.sprite.size[0] + self.sprite.size[0] * dt * self.speed, self.sprite.size[1] + self.sprite.size[1] * dt * self.speed)
 
+class SpriteSheet(SpriteModifier):
+    def __init__(self, atlas, frameCount, frameTime, **kwargs):
+        super(SpriteSheet, self).__init__(**kwargs)
+        self.atlas = atlas
+        self.frameCount = frameCount
+        self.currentFrame = 1
+        self.timeOnFrame = 0
+        self.frameTime = frameTime
+        #self.sprite.source = self.atlas + "/frame" + str(self.currentFrame)
+        #self.vel = ReferenceListProperty(NumericProperty(vel[0]), NumericProperty(vel[1]))
+
+    def update(self, dt):
+        self.timeOnFrame += dt
+        if self.timeOnFrame >= self.frameTime[self.currentFrame]:
+            self.timeOnFrame = 0
+            self.currentFrame += 1
+            if self.currentFrame >= self.frameCount:
+                self.currentFrame = 0
+            self.sprite.source = self.atlas + "/frame" + str(self.currentFrame)
+
+    def getCanvasComponent(self):
+        return None
+
 class BoundsDelete(SpriteModifier):
     def __init__(self, xLimits, yLimits, **kwargs):
         super(BoundsDelete, self).__init__(**kwargs)
